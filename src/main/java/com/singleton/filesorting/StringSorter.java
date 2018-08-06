@@ -56,9 +56,7 @@ public class StringSorter {
         // We have guarantee we have at least one line in each file scanner created fork
         for (int i = 0; i <= chunkNumber; i++) {
             if (iterators[i] == null) {
-                if (scanners[i].hasNext()) {
-                    iterators[i] = scanners[i].next();
-                }
+                iterators[i] = scanners[i].next();
             }
         }
 
