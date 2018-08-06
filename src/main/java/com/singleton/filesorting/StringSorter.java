@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class FileSorter {
+public class StringSorter {
 
     public static void main(String[] args) throws FileNotFoundException {
         var inputFileName = args[0];
