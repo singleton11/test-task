@@ -47,25 +47,19 @@ public class FileSorter {
         for (int i = 0; i <= chunkNumber; i++) {
             scanners[i] = new Scanner(new File(inputFileName + '.' + i));
         }
-        var activeIteratorCount = 0;
         var writer = new PrintWriter(outputFileName);
-        do {
-            // If one of string iterator is null, update it
-            for (int i = 0; i <= chunkNumber; i++) {
-                if (iterators[i] == null) {
-                    if (scanners[i].hasNextLine()) {
-                        try {
-                            iterators[i] = scanners[i].next();
-                            activeIteratorCount++;
-                        } catch (NoSuchElementException e) {
 
-                        }
-                    }
+        for (int i = 0; i <= chunkNumber; i++) {
+            if (iterators[i] == null) {
+                if (scanners[i].hasNextLine()) {
+                    iterators[i] = scanners[i].next();
                 }
             }
+        }
 
-            // Find a minimum string and write it to result file
-            int min = 0;
+        while(true) {
+            // Find a minimum not null string and write it to result file
+            var min = 0;
             for (int i = 0; i <= chunkNumber; i++) {
                 if (iterators[min] == null) {
                     if (iterators[i] != null) {
@@ -81,11 +75,18 @@ public class FileSorter {
                 }
             }
 
-            writer.println(iterators[min]);
-            iterators[min] = null;
-            activeIteratorCount--;
+            if (iterators[min] == null) {
+                break;
+            }
 
-        } while (activeIteratorCount > 0);
+            writer.println(iterators[min]);
+            if (scanners[min].hasNext()) {
+                iterators[min] = scanners[min].next();
+            } else {
+                iterators[min] = null;
+            }
+
+        }
 
         // Remove temporary files
         for (int i = 0; i <= chunkNumber; i++) {
@@ -96,6 +97,9 @@ public class FileSorter {
     }
 
     private static void sortAndPersistStrings(List<String> strings, int chunkNumber, String inputFileName) throws FileNotFoundException {
+        if (strings.size() == 0) {
+            return;
+        }
         var writer = new PrintWriter(inputFileName + '.' + chunkNumber);
         strings.stream().sorted().forEach(writer::println);
         writer.close();
