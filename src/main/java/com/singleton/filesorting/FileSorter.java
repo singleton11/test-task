@@ -15,6 +15,7 @@ public class FileSorter {
         var chunkSize = Integer.parseInt(args[2]); // Lines count
 
         var scanner = new Scanner(new File(inputFileName));
+        var writer = new PrintWriter(outputFileName);
 
         var strings = new ArrayList<String>();
 
@@ -38,6 +39,11 @@ public class FileSorter {
             strings.add(string);
             lineNumber++;
         }
+        if (chunkNumber == 0 && strings.isEmpty()) {
+            // Empty input file
+            writer.close();
+            return;
+        }
         sortAndPersistStrings(strings, chunkNumber, inputFileName);
 
         // Merge stage
@@ -46,11 +52,11 @@ public class FileSorter {
         for (int i = 0; i <= chunkNumber; i++) {
             scanners[i] = new Scanner(new File(inputFileName + '.' + i));
         }
-        var writer = new PrintWriter(outputFileName);
+
 
         for (int i = 0; i <= chunkNumber; i++) {
             if (iterators[i] == null) {
-                if (scanners[i].hasNextLine()) {
+                if (scanners[i].hasNext()) {
                     iterators[i] = scanners[i].next();
                 }
             }
@@ -96,7 +102,7 @@ public class FileSorter {
     }
 
     private static void sortAndPersistStrings(List<String> strings, int chunkNumber, String inputFileName) throws FileNotFoundException {
-        if (strings.size() == 0) {
+        if (strings.isEmpty()) {
             return;
         }
         var writer = new PrintWriter(inputFileName + '.' + chunkNumber);
